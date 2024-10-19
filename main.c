@@ -95,19 +95,32 @@ int main(int argc, char** argv) {
     point out;
     bool positive[2] = {vector.x > 0, vector.y > 0};
     while (shot_strength > 0) {
-        if (check_x_bounce(a_multiplier, length, width, positive[0], a, &out)) {
+        if (check_x_bounce(a_multiplier, length, width, positive[0], a, &out))
             positive[0] = !positive[0];
-            shot_strength -= calculate_segment_length(a, out);
-            a = out;
-        }
 
-        if (check_y_bounce(a_multiplier, length, width, positive[1], a, &out)) {
+        if (check_y_bounce(a_multiplier, length, width, positive[1], a, &out))
             positive[1] = !positive[1];
-            shot_strength -= calculate_segment_length(a, out);
-            a = out;
-        }
+
+        shot_strength -= calculate_segment_length(a, out);
+        a = out;
 
         printf("%Lf, %Lf, %Lf\n", a.x, a.y, shot_strength);
+
+        for (int i = length; i >= 0; i--) {
+            for (int j = 0; j <= width; j++) {
+                // Mapping the ball's position to the table grid
+                int ball_x = (int)roundl(a.x + width / 2);
+                int ball_y = (int)roundl(a.y + length / 2);
+
+                // Ensure ball position is within bounds of the table
+                if (i == ball_y && j == ball_x) {
+                    printf("OO"); // Ball symbol
+                } else {
+                    printf(".."); // Empty space
+                }
+            }
+            printf("\n");
+        }
 
         shot_strength *= 0.95;
         a_multiplier *= -1;
