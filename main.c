@@ -1,9 +1,13 @@
 #include <locale.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #define BASE_TABLE_LENGTH 2
 #define BASE_TABLE_WIDTH 4
+
+// TODO stop the ball when energy gone
+// print
 
 typedef struct { long double x; long double y; } point;
 
@@ -35,6 +39,10 @@ bool check_x_bounce(const long double a, const int table_height, const int table
         return true;
     }
     return false;
+}
+
+long double calculate_segment_length(const point a, const point b) {
+    return sqrtl(powl(b.x - a.x, 2.0) + powl(b.y - a.y, 2.0));
 }
 
 // args:
@@ -72,46 +80,37 @@ int main(int argc, char** argv) {
 
         // TODO parse initial position to see if it's within table bounds
 
-        // printf("%lli\n", converted);
-
         parsed_args[i-1] = converted;
     }
     const auto table_size_multiplier = parsed_args[0];
-    const long double shot_strength = (long double)parsed_args[1];
+    long double shot_strength = (long double)parsed_args[1];
     point a = {(long double)parsed_args[2], (long double)parsed_args[3]};
     const point vector = {(long double)parsed_args[4], (long double) parsed_args[5]};
     const point b = {a.x + vector.x, a.y + vector.y};
 
-    auto length = BASE_TABLE_LENGTH * table_size_multiplier;
-    auto width = BASE_TABLE_WIDTH * table_size_multiplier;
-
-    // const point new = {-6, -1};
-    // if (check_x_bounce(-3.0/2, 6, 12, false, new, &out)) {
-    //     printf("true");
-    // } else {
-    //     printf("false");
-    // }
+    const auto length = BASE_TABLE_LENGTH * table_size_multiplier;
+    const auto width = BASE_TABLE_WIDTH * table_size_multiplier;
 
     auto a_multiplier = (b.y - a.y) / (b.x - a.x);
-
-    int i = 0;
     point out;
     bool positive[2] = {vector.x > 0, vector.y > 0};
-    while (i < 5) {
+    while (shot_strength > 0) {
         if (check_x_bounce(a_multiplier, length, width, positive[0], a, &out)) {
             positive[0] = !positive[0];
+            shot_strength -= calculate_segment_length(a, out);
             a = out;
         }
 
         if (check_y_bounce(a_multiplier, length, width, positive[1], a, &out)) {
             positive[1] = !positive[1];
+            shot_strength -= calculate_segment_length(a, out);
             a = out;
         }
 
-        printf("%Lf, %Lf\n", a.x, a.y);
+        printf("%Lf, %Lf, %Lf\n", a.x, a.y, shot_strength);
 
+        shot_strength *= 0.95;
         a_multiplier *= -1;
-        i++;
     }
 
     return 0;
