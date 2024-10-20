@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define BASE_TABLE_LENGTH 2
+#define BASE_TABLE_HEIGHT 2
 #define BASE_TABLE_WIDTH 4
 
 // TODO stop the ball when energy gone
@@ -78,7 +78,20 @@ int main(int argc, char** argv) {
             return 1;
         }
 
-        // TODO parse initial position to see if it's within table bounds
+        // check for ball out of bounds
+        if (i == 3 && (converted > BASE_TABLE_WIDTH * parsed_args[0] / 2 || converted < BASE_TABLE_WIDTH * parsed_args[0] / 2 * -1)
+            || i == 4 && (converted > BASE_TABLE_HEIGHT * parsed_args[0] / 2 || converted < BASE_TABLE_HEIGHT * parsed_args[0] / 2 * -1)) {
+            wprintf(L"Położenie początkowe bili nie może być poza stołem.");
+            return 1;
+        }
+
+        // check for [0, 0] vector
+        if (i == 6 && converted == 0) {
+            if (parsed_args[i - 2] == 0) {
+                wprintf(L"Wektor nie może mieć wartości [0, 0].");
+                return 1;
+            }
+        }
 
         parsed_args[i-1] = converted;
     }
@@ -88,7 +101,7 @@ int main(int argc, char** argv) {
     const point vector = {(long double)parsed_args[4], (long double) parsed_args[5]};
     const point b = {a.x + vector.x, a.y + vector.y};
 
-    const auto length = BASE_TABLE_LENGTH * table_size_multiplier;
+    const auto length = BASE_TABLE_HEIGHT * table_size_multiplier;
     const auto width = BASE_TABLE_WIDTH * table_size_multiplier;
 
     auto a_multiplier = (b.y - a.y) / (b.x - a.x);
