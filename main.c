@@ -5,6 +5,7 @@
 
 #define BASE_TABLE_HEIGHT 2
 #define BASE_TABLE_WIDTH 4
+#define ENERGY_LOSS 0.95
 
 // TODO stop the ball when energy gone
 // print
@@ -31,8 +32,8 @@ bool check_x_bounce(const long double a, const int table_height, const int table
     auto y = table_height / 2;
     if (!positive) y *= -1;
     const auto x = (y - in_point.y) / a + in_point.x;
-    const auto width = table_width / 2;
 
+    const auto width = table_width / 2;
     if (x <= width && x >= -width) {
         out_point->x = x;
         out_point->y = y;
@@ -135,7 +136,7 @@ int main(int argc, char** argv) {
             printf("\n");
         }
 
-        shot_strength *= 0.95;
+        shot_strength *= ENERGY_LOSS;
         a_multiplier *= -1;
     }
 
