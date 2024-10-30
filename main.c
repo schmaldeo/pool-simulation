@@ -7,17 +7,16 @@
 #define BASE_TABLE_WIDTH 4
 #define ENERGY_LOSS 0.95
 
-// TODO stop the ball when energy gone
 // print
 
 typedef struct { long double x; long double y; } point;
 
 // checks if there is a bounce off the boundary along the Y axis
-bool check_y_bounce(const long double a, const int table_height, const int table_width, const bool positive, const point in_point, point *out_point) {
+bool check_y_bounce(const long double slope, const int table_height, const int table_width, const bool positive, const point in_point, point *out_point) {
     auto x = table_width / 2;
     // if checking bottom boundary
     if (!positive) x *= -1;
-    const auto y = a * x - in_point.x * a + in_point.y;
+    const auto y = slope * x - in_point.x * slope + in_point.y;
 
     const auto height = table_height / 2;
     if (y <= height && y >= -height) {
@@ -28,10 +27,10 @@ bool check_y_bounce(const long double a, const int table_height, const int table
     return false;
 }
 
-bool check_x_bounce(const long double a, const int table_height, const int table_width, const bool positive, const point in_point, point *out_point) {
+bool check_x_bounce(const long double slope, const int table_height, const int table_width, const bool positive, const point in_point, point *out_point) {
     auto y = table_height / 2;
     if (!positive) y *= -1;
-    const auto x = (y - in_point.y) / a + in_point.x;
+    const auto x = (y - in_point.y) / slope + in_point.x;
 
     const auto width = table_width / 2;
     if (x <= width && x >= -width) {
@@ -44,6 +43,38 @@ bool check_x_bounce(const long double a, const int table_height, const int table
 
 long double calculate_segment_length(const point a, const point b) {
     return sqrtl(powl(b.x - a.x, 2.0) + powl(b.y - a.y, 2.0));
+}
+
+// TODO working correctly but still need to know if it's going positive or negative atm
+bool calculate_segment_end(const long double slope, const point p, const long double length, bool positive, const int table_height, const int table_width, point *out_point) {
+    auto a = powl(slope, 2.0) + 1;
+    auto b = 2 * p.x + powl(slope, 2.0) - (powl(slope, 2.0) * 2 * p.x);
+    auto c = powl(p.x, 2.0) + powl(a * p.x, 2.0) - powl(length, 2.0);
+
+    auto delta = powl(b, 2.0) - (4 * a * c);
+    auto delta_sqrt = sqrtl(delta);
+
+    auto xb1 = (-b - delta_sqrt) / (2 * a);
+    auto xb2 = (-b + delta_sqrt) / (2 * a);
+
+    auto yb1 = (slope * xb1) - (slope * p.x) + p.y;
+    auto yb2 = (slope * xb2) - (slope * p.x) + p.y;
+
+    if (xb1 <= table_width / 2.0 && xb1 >= -(table_width / 2.0)
+        && yb1 <= table_height / 2.0 && yb1 >= -(table_height / 2.0)) {
+        out_point->x = xb1;
+        out_point->y = yb1;
+        return true;
+    }
+
+    if (xb2 <= table_width / 2.0 && xb2 >= -(table_width / 2.0)
+        && yb2 <= table_height / 2.0 && yb2 >= -(table_height / 2.0)) {
+        out_point->x = xb2;
+        out_point->y = yb2;
+        return true;
+    }
+
+    return false;
 }
 
 // args:
@@ -105,39 +136,36 @@ int main(int argc, char** argv) {
     const auto length = BASE_TABLE_HEIGHT * table_size_multiplier;
     const auto width = BASE_TABLE_WIDTH * table_size_multiplier;
 
-    auto a_multiplier = (b.y - a.y) / (b.x - a.x);
+    // TODO 0 div
+    auto slope = (b.y - a.y) / (b.x - a.x);
     point out;
     bool positive[2] = {vector.x > 0, vector.y > 0};
     while (shot_strength > 0) {
-        if (check_x_bounce(a_multiplier, length, width, positive[0], a, &out))
+        if (check_x_bounce(slope, length, width, positive[0], a, &out)) {
+            if (calculate_segment_length(a, out) > shot_strength) {
+                calculate_segment_end(slope, a, shot_strength, positive[0], length, width, &out);
+                printf("stopped at %Lf, %Lf", out.x, out.y);
+                break;
+            }
             positive[0] = !positive[0];
+        }
 
-        if (check_y_bounce(a_multiplier, length, width, positive[1], a, &out))
+        if (check_y_bounce(slope, length, width, positive[1], a, &out)) {
+            if (calculate_segment_length(a, out) > shot_strength) {
+                calculate_segment_end(slope, a, shot_strength, positive[1], length, width, &out);
+                printf("stopped at %Lf, %Lf", out.x, out.y);
+                break;
+            }
             positive[1] = !positive[1];
+        }
 
         shot_strength -= calculate_segment_length(a, out);
         a = out;
 
         printf("%Lf, %Lf, %Lf\n", a.x, a.y, shot_strength);
 
-        for (int i = length; i >= 0; i--) {
-            for (int j = 0; j <= width; j++) {
-                // Mapping the ball's position to the table grid
-                int ball_x = (int)roundl(a.x + width / 2);
-                int ball_y = (int)roundl(a.y + length / 2);
-
-                // Ensure ball position is within bounds of the table
-                if (i == ball_y && j == ball_x) {
-                    printf("OO"); // Ball symbol
-                } else {
-                    printf(".."); // Empty space
-                }
-            }
-            printf("\n");
-        }
-
         shot_strength *= ENERGY_LOSS;
-        a_multiplier *= -1;
+        slope *= -1;
     }
 
     return 0;
