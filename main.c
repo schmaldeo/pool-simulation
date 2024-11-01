@@ -48,29 +48,31 @@ long double calculate_segment_length(const point a, const point b) {
 // TODO working correctly but still need to know if it's going positive or negative atm
 bool calculate_segment_end(const long double slope, const point p, const long double length, bool positive, const int table_height, const int table_width, point *out_point) {
     auto a = powl(slope, 2.0) + 1;
-    auto b = 2 * p.x + powl(slope, 2.0) - (powl(slope, 2.0) * 2 * p.x);
-    auto c = powl(p.x, 2.0) + powl(a * p.x, 2.0) - powl(length, 2.0);
+    auto b = -2 * p.x - 2 * p.x * powl(slope, 2.0);
+    auto c = powl(p.x, 2.0) + powl(slope * p.x, 2.0) - powl(length, 2.0);
 
     auto delta = powl(b, 2.0) - (4 * a * c);
     auto delta_sqrt = sqrtl(delta);
-
     auto xb1 = (-b - delta_sqrt) / (2 * a);
     auto xb2 = (-b + delta_sqrt) / (2 * a);
 
     auto yb1 = (slope * xb1) - (slope * p.x) + p.y;
     auto yb2 = (slope * xb2) - (slope * p.x) + p.y;
 
-    if (xb1 <= table_width / 2.0 && xb1 >= -(table_width / 2.0)
-        && yb1 <= table_height / 2.0 && yb1 >= -(table_height / 2.0)) {
-        out_point->x = xb1;
-        out_point->y = yb1;
-        return true;
-    }
-
-    if (xb2 <= table_width / 2.0 && xb2 >= -(table_width / 2.0)
+    // both points are valid, just on a different side of the point that's passed to the function
+    if (positive
+        && xb2 <= table_width / 2.0 && xb2 >= -(table_width / 2.0)
         && yb2 <= table_height / 2.0 && yb2 >= -(table_height / 2.0)) {
         out_point->x = xb2;
         out_point->y = yb2;
+        return true;
+    }
+
+    if (!positive
+        && xb1 <= table_width / 2.0 && xb1 >= -(table_width / 2.0)
+        && yb1 <= table_height / 2.0 && yb1 >= -(table_height / 2.0)) {
+        out_point->x = xb1;
+        out_point->y = yb1;
         return true;
     }
 
