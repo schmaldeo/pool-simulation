@@ -7,6 +7,9 @@
 #define BASE_TABLE_WIDTH 4
 #define ENERGY_LOSS 0.95
 
+#define STB_DS_IMPLEMENTATION
+#include "stb_ds.h"
+
 // print
 
 typedef struct { long double x; long double y; } point;
@@ -142,11 +145,12 @@ int main(int argc, char** argv) {
     auto slope = (b.y - a.y) / (b.x - a.x);
     point out;
     bool positive[2] = {vector.x > 0, vector.y > 0};
+    point *bounces = nullptr;
     while (shot_strength > 0) {
         if (check_x_bounce(slope, length, width, positive[0], a, &out)) {
             if (calculate_segment_length(a, out) > shot_strength) {
                 calculate_segment_end(slope, a, shot_strength, positive[0], length, width, &out);
-                printf("stopped at %Lf, %Lf", out.x, out.y);
+                printf("stopped at %Lf, %Lf\n", out.x, out.y);
                 break;
             }
             positive[0] = !positive[0];
@@ -155,7 +159,7 @@ int main(int argc, char** argv) {
         if (check_y_bounce(slope, length, width, positive[1], a, &out)) {
             if (calculate_segment_length(a, out) > shot_strength) {
                 calculate_segment_end(slope, a, shot_strength, positive[1], length, width, &out);
-                printf("stopped at %Lf, %Lf", out.x, out.y);
+                printf("stopped at %Lf, %Lf\n", out.x, out.y);
                 break;
             }
             positive[1] = !positive[1];
@@ -164,11 +168,15 @@ int main(int argc, char** argv) {
         shot_strength -= calculate_segment_length(a, out);
         a = out;
 
-        printf("%Lf, %Lf, %Lf\n", a.x, a.y, shot_strength);
+        arrpush(bounces, a);
 
         shot_strength *= ENERGY_LOSS;
         slope *= -1;
     }
 
+    for (int i = 0; i < arrlen(bounces); i++) {
+        printf("%Lf, %Lf\n", bounces[i].x, bounces[i].y);
+    }
+    arrfree(bounces);
     return 0;
 }
