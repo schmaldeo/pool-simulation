@@ -114,22 +114,8 @@ int main(int argc, char** argv) {
         printf("%Lf, %Lf\n", bounces[i].x, bounces[i].y);
     }
 
-    for (int i = 0; i < arrlen(bounces) - 1; i++) {
-        int x0, y0, x1, y1;
-        map_to_grid(bounces[i], &x0, &y0, width, length);
-        map_to_grid(bounces[i + 1], &x1, &y1, width, length);
-
-        plot_line(grid, x0, y0, x1, y1);
-    }
-
-    for (int i = 0; i < arrlen(bounces); i++) {
-        int gx, gy;
-        map_to_grid(bounces[i], &gx, &gy, width, length);
-        if (gx >= 0 && gx < CONSOLE_GRID_WIDTH && gy >= 0 && gy < CONSOLE_GRID_HEIGHT) {
-            grid[gy][gx] = 'o';
-        }
-    }
-
+    plot_lines(grid, bounces, width, length);
+    mark_start_end(grid, bounces, width, length);
     print_grid(grid);
 
     arrfree(bounces);

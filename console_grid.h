@@ -9,9 +9,11 @@
 
 typedef char grid[CONSOLE_GRID_HEIGHT][CONSOLE_GRID_WIDTH];
 
-void map_to_grid(const point p, int *grid_x, int *grid_y, const int table_width, const int table_height);
+void map_to_grid(point p, int *grid_x, int *grid_y, int table_width, int table_height);
 void plot_line(grid g, int x0, int y0, int x1, int y1);
 void initial_fill_grid(grid g);
+void plot_lines(grid g, point *bounces, int table_width, int table_height);
+void mark_start_end(grid g, point *bounces, int table_width, int table_height);
 void print_grid(grid g);
 
 #endif //CONSOLE_GRID_H

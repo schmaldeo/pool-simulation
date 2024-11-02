@@ -1,5 +1,6 @@
 #include <math.h>
 #include "console_grid.h"
+#include "stb_ds.h"
 
 #include <stdio.h>
 
@@ -41,6 +42,38 @@ void plot_line(grid g, int x0, int y0, int x1, int y1) {
     }
 }
 
+void mark_start_end(grid g, point *bounces, int table_width, int table_height) {
+    int gx, gy;
+    map_to_grid(bounces[0], &gx, &gy, table_width, table_height);
+    if (gx >= 0 && gx < CONSOLE_GRID_WIDTH && gy >= 0 && gy < CONSOLE_GRID_HEIGHT) {
+        g[gy][gx] = 'S';
+    }
+
+    map_to_grid(bounces[arrlen(bounces) - 1], &gx, &gy, table_width, table_height);
+    if (gx >= 0 && gx < CONSOLE_GRID_WIDTH && gy >= 0 && gy < CONSOLE_GRID_HEIGHT) {
+        g[gy][gx] = 'o';
+    }
+}
+
+// fills grid with spaces
+void initial_fill_grid(grid g) {
+    for (int i = 0; i < CONSOLE_GRID_HEIGHT; i++) {
+        for (int j = 0; j < CONSOLE_GRID_WIDTH; j++) {
+            g[i][j] = ' ';
+        }
+    }
+}
+
+void plot_lines(grid g, point *bounces, int table_width, int table_height) {
+    for (int i = 0; i < arrlen(bounces) - 1; i++) {
+        int x0, y0, x1, y1;
+        map_to_grid(bounces[i], &x0, &y0, table_width, table_height);
+        map_to_grid(bounces[i + 1], &x1, &y1, table_width, table_height);
+
+        plot_line(g, x0, y0, x1, y1);
+    }
+}
+
 void print_grid(grid g) {
     printf("+");
     for (int i = 0; i < CONSOLE_GRID_WIDTH; i++) {
@@ -61,13 +94,4 @@ void print_grid(grid g) {
         printf("-");
     }
     printf("+\n");
-}
-
-// fills grid with spaces
-void initial_fill_grid(grid g) {
-    for (int i = 0; i < CONSOLE_GRID_HEIGHT; i++) {
-        for (int j = 0; j < CONSOLE_GRID_WIDTH; j++) {
-            g[i][j] = ' ';
-        }
-    }
 }
