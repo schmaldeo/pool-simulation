@@ -3,4 +3,9 @@ project(projekt_studia C)
 
 set(CMAKE_C_STANDARD 23)
 
-add_executable(projekt_studia main.c)
+add_executable(projekt_studia main.c
+        geometry.c
+        geometry.h
+        console_grid.c
+        console_grid.h
+)

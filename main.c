@@ -2,85 +2,17 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "geometry.h"
 
 #define BASE_TABLE_HEIGHT 2
 #define BASE_TABLE_WIDTH 4
 #define ENERGY_LOSS 0.95
+#define CONSOLE_GRID_WIDTH 90
+#define CONSOLE_GRID_HEIGHT 15
 
 #define STB_DS_IMPLEMENTATION
+#include "console_grid.h"
 #include "stb_ds.h"
-
-// print
-
-typedef struct { long double x; long double y; } point;
-
-// checks if there is a bounce off the boundary along the Y axis
-bool check_y_bounce(const long double slope, const int table_height, const int table_width, const bool positive, const point in_point, point *out_point) {
-    auto x = table_width / 2;
-    // if checking bottom boundary
-    if (!positive) x *= -1;
-    const auto y = slope * x - in_point.x * slope + in_point.y;
-
-    const auto height = table_height / 2;
-    if (y <= height && y >= -height) {
-        out_point->x = x;
-        out_point->y = y;
-        return true;
-    }
-    return false;
-}
-
-bool check_x_bounce(const long double slope, const int table_height, const int table_width, const bool positive, const point in_point, point *out_point) {
-    auto y = table_height / 2;
-    if (!positive) y *= -1;
-    const auto x = (y - in_point.y) / slope + in_point.x;
-
-    const auto width = table_width / 2;
-    if (x <= width && x >= -width) {
-        out_point->x = x;
-        out_point->y = y;
-        return true;
-    }
-    return false;
-}
-
-long double calculate_segment_length(const point a, const point b) {
-    return sqrtl(powl(b.x - a.x, 2.0) + powl(b.y - a.y, 2.0));
-}
-
-// TODO working correctly but still need to know if it's going positive or negative atm
-bool calculate_segment_end(const long double slope, const point p, const long double length, bool positive, const int table_height, const int table_width, point *out_point) {
-    auto a = powl(slope, 2.0) + 1;
-    auto b = -2 * p.x - 2 * p.x * powl(slope, 2.0);
-    auto c = powl(p.x, 2.0) + powl(slope * p.x, 2.0) - powl(length, 2.0);
-
-    auto delta = powl(b, 2.0) - (4 * a * c);
-    auto delta_sqrt = sqrtl(delta);
-    auto xb1 = (-b - delta_sqrt) / (2 * a);
-    auto xb2 = (-b + delta_sqrt) / (2 * a);
-
-    auto yb1 = (slope * xb1) - (slope * p.x) + p.y;
-    auto yb2 = (slope * xb2) - (slope * p.x) + p.y;
-
-    // both points are valid, just on a different side of the point that's passed to the function
-    if (positive
-        && xb2 <= table_width / 2.0 && xb2 >= -(table_width / 2.0)
-        && yb2 <= table_height / 2.0 && yb2 >= -(table_height / 2.0)) {
-        out_point->x = xb2;
-        out_point->y = yb2;
-        return true;
-    }
-
-    if (!positive
-        && xb1 <= table_width / 2.0 && xb1 >= -(table_width / 2.0)
-        && yb1 <= table_height / 2.0 && yb1 >= -(table_height / 2.0)) {
-        out_point->x = xb1;
-        out_point->y = yb1;
-        return true;
-    }
-
-    return false;
-}
 
 // args:
 // 1. m - table size multiplier (positive integer)
@@ -141,16 +73,20 @@ int main(int argc, char** argv) {
     const auto length = BASE_TABLE_HEIGHT * table_size_multiplier;
     const auto width = BASE_TABLE_WIDTH * table_size_multiplier;
 
+    char grid[CONSOLE_GRID_HEIGHT][CONSOLE_GRID_WIDTH];
+    initial_fill_grid(grid);
+
     // TODO 0 div
     auto slope = (b.y - a.y) / (b.x - a.x);
     point out;
     bool positive[2] = {vector.x > 0, vector.y > 0};
     point *bounces = nullptr;
+    arrpush(bounces, a);
     while (shot_strength > 0) {
         if (check_x_bounce(slope, length, width, positive[0], a, &out)) {
             if (calculate_segment_length(a, out) > shot_strength) {
                 calculate_segment_end(slope, a, shot_strength, positive[0], length, width, &out);
-                printf("stopped at %Lf, %Lf\n", out.x, out.y);
+                arrpush(bounces, out);
                 break;
             }
             positive[0] = !positive[0];
@@ -159,7 +95,7 @@ int main(int argc, char** argv) {
         if (check_y_bounce(slope, length, width, positive[1], a, &out)) {
             if (calculate_segment_length(a, out) > shot_strength) {
                 calculate_segment_end(slope, a, shot_strength, positive[1], length, width, &out);
-                printf("stopped at %Lf, %Lf\n", out.x, out.y);
+                arrpush(bounces, out);
                 break;
             }
             positive[1] = !positive[1];
@@ -177,6 +113,26 @@ int main(int argc, char** argv) {
     for (int i = 0; i < arrlen(bounces); i++) {
         printf("%Lf, %Lf\n", bounces[i].x, bounces[i].y);
     }
+
+    for (int i = 0; i < arrlen(bounces) - 1; i++) {
+        int x0, y0, x1, y1;
+        map_to_grid(bounces[i], &x0, &y0, width, length);
+        map_to_grid(bounces[i + 1], &x1, &y1, width, length);
+
+        plot_line(grid, x0, y0, x1, y1);
+    }
+
+    // marking bounces but doesn't work properly for some reason
+    for (int i = 0; i < arrlen(bounces); i++) {
+        int gx, gy;
+        map_to_grid(bounces[i], &gx, &gy, width, length);
+        if (gx >= 0 && gx < CONSOLE_GRID_WIDTH && gy >= 0 && gy < CONSOLE_GRID_HEIGHT) {
+            grid[gy][gx] = 'o';
+        }
+    }
+
+    print_grid(grid);
+
     arrfree(bounces);
     return 0;
 }
