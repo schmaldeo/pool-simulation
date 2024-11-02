@@ -7,8 +7,6 @@
 #define BASE_TABLE_HEIGHT 2
 #define BASE_TABLE_WIDTH 4
 #define ENERGY_LOSS 0.95
-#define CONSOLE_GRID_WIDTH 90
-#define CONSOLE_GRID_HEIGHT 15
 
 #define STB_DS_IMPLEMENTATION
 #include "console_grid.h"
@@ -76,16 +74,17 @@ int main(int argc, char** argv) {
     char grid[CONSOLE_GRID_HEIGHT][CONSOLE_GRID_WIDTH];
     initial_fill_grid(grid);
 
-    // TODO 0 div
+    // TODO 0 div when shooting straight up
     auto slope = (b.y - a.y) / (b.x - a.x);
     point out;
-    bool positive[2] = {vector.x > 0, vector.y > 0};
+    bool positive[2] = {vector.y > 0, vector.x > 0};
     point *bounces = nullptr;
     arrpush(bounces, a);
     while (shot_strength > 0) {
         if (check_x_bounce(slope, length, width, positive[0], a, &out)) {
             if (calculate_segment_length(a, out) > shot_strength) {
                 calculate_segment_end(slope, a, shot_strength, positive[0], length, width, &out);
+                printf("stopped at %Lf, %Lf\n", out.x, out.y);
                 arrpush(bounces, out);
                 break;
             }
@@ -95,6 +94,7 @@ int main(int argc, char** argv) {
         if (check_y_bounce(slope, length, width, positive[1], a, &out)) {
             if (calculate_segment_length(a, out) > shot_strength) {
                 calculate_segment_end(slope, a, shot_strength, positive[1], length, width, &out);
+                printf("stopped at %Lf, %Lf\n", out.x, out.y);
                 arrpush(bounces, out);
                 break;
             }
@@ -122,7 +122,6 @@ int main(int argc, char** argv) {
         plot_line(grid, x0, y0, x1, y1);
     }
 
-    // marking bounces but doesn't work properly for some reason
     for (int i = 0; i < arrlen(bounces); i++) {
         int gx, gy;
         map_to_grid(bounces[i], &gx, &gy, width, length);

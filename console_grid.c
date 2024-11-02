@@ -6,7 +6,19 @@
 // cartesian coordinates to grid coordinates
 void map_to_grid(const point p, int *grid_x, int *grid_y, const int table_width, const int table_height) {
     *grid_x = (int)((p.x + table_width / 2) / table_width * CONSOLE_GRID_WIDTH);
-    *grid_y = CONSOLE_GRID_HEIGHT - 1 - (int)((p.y + table_height / 2) / table_height * CONSOLE_GRID_HEIGHT);
+    *grid_y = (int)((p.y + table_height / 2) / table_height * CONSOLE_GRID_HEIGHT);
+
+    // make sure no bounces are outside the table
+    if (*grid_x >= CONSOLE_GRID_WIDTH) {
+        *grid_x = CONSOLE_GRID_WIDTH - 1;
+    }
+
+    if (*grid_y >= CONSOLE_GRID_HEIGHT) {
+        *grid_y = CONSOLE_GRID_HEIGHT - 1;
+    }
+
+    // invert
+    *grid_y = CONSOLE_GRID_HEIGHT - 1 - *grid_y;
 }
 
 
@@ -41,7 +53,7 @@ void print_grid(grid g) {
         for (int j = 0; j < CONSOLE_GRID_WIDTH; j++) {
             putchar(g[i][j]);
         }
-        printf("|\n");
+        printf("|%i\n", i);
     }
 
     printf("+");

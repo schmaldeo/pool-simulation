@@ -3,8 +3,8 @@
 
 #include "geometry.h"
 
-#define CONSOLE_GRID_WIDTH 90
-#define CONSOLE_GRID_HEIGHT 15
+#define CONSOLE_GRID_WIDTH 91
+#define CONSOLE_GRID_HEIGHT 21
 
 typedef char grid[CONSOLE_GRID_HEIGHT][CONSOLE_GRID_WIDTH];
 
