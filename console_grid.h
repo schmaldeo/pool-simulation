@@ -3,6 +3,7 @@
 
 #include "geometry.h"
 
+// odd values so there's a central point
 #define CONSOLE_GRID_WIDTH 91
 #define CONSOLE_GRID_HEIGHT 21
 

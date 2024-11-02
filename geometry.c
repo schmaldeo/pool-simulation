@@ -35,7 +35,6 @@ long double calculate_segment_length(const point a, const point b) {
     return sqrtl(powl(b.x - a.x, 2.0) + powl(b.y - a.y, 2.0));
 }
 
-// TODO test slope >0, <0, ==0 and use positive accordingly
 bool calculate_segment_end(const long double slope, const point p, const long double length, bool positive, const int table_height, const int table_width, point *out_point) {
     auto a = powl(slope, 2.0) + 1;
     auto b = -2 * p.x - 2 * p.x * powl(slope, 2.0);
@@ -50,7 +49,7 @@ bool calculate_segment_end(const long double slope, const point p, const long do
     auto yb2 = (slope * xb2) - (slope * p.x) + p.y;
 
     // both points are valid, just on a different side of the point that's passed to the function
-    if (positive
+    if ((positive && slope >= 0) || (!positive && slope < 0)
         && xb2 <= table_width / 2.0 && xb2 >= -(table_width / 2.0)
         && yb2 <= table_height / 2.0 && yb2 >= -(table_height / 2.0)) {
         out_point->x = xb2;
@@ -58,7 +57,7 @@ bool calculate_segment_end(const long double slope, const point p, const long do
         return true;
         }
 
-    if (!positive
+    if ((!positive && slope >= 0) || (positive && slope < 0)
         && xb1 <= table_width / 2.0 && xb1 >= -(table_width / 2.0)
         && yb1 <= table_height / 2.0 && yb1 >= -(table_height / 2.0)) {
         out_point->x = xb1;
