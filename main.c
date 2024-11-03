@@ -6,7 +6,7 @@
 
 #define BASE_TABLE_HEIGHT 2
 #define BASE_TABLE_WIDTH 4
-#define ENERGY_LOSS 0.95
+#define ENERGY_LOSS 1
 
 #define STB_DS_IMPLEMENTATION
 #include "console_grid.h"
@@ -74,17 +74,25 @@ int main(int argc, char** argv) {
     char grid[CONSOLE_GRID_HEIGHT][CONSOLE_GRID_WIDTH];
     initial_fill_grid(grid);
 
-    // TODO 0 div when shooting straight up
     auto slope = (b.y - a.y) / (b.x - a.x);
     point out;
     bool positive[2] = {vector.y > 0, vector.x > 0};
     point *bounces = nullptr;
     arrpush(bounces, a);
+
     while (shot_strength > 0) {
         if (check_x_bounce(slope, length, width, positive[0], a, &out)) {
-            if (calculate_segment_length(a, out) > shot_strength) {
-                auto p = calculate_segment_end(slope, a, shot_strength, positive[0], y);
-                arrpush(bounces, p);
+            auto segment_length = calculate_segment_length(a, out);
+            if (segment_length > shot_strength) {
+                // because if the vector's x is 0, it's not a linear function, normal line calculations don't work
+                // properly for it
+                if (vector.x != 0.0) {
+                    auto p = calculate_segment_end(slope, a, shot_strength, positive[1], x);
+                    arrpush(bounces, p);
+                } else {
+                    point p = { out.x, positive[0] ? a.y + shot_strength : a.y - shot_strength };
+                    arrpush(bounces, p);
+                }
                 break;
             }
             positive[0] = !positive[0];
