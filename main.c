@@ -19,7 +19,7 @@
 // 5. wx - X coordinate of vector of ball's initial movement
 // 6. wy - Y coordinate of vector of ball's initial movement
 int main(int argc, char** argv) {
-    setlocale(LC_ALL, "Polish");
+    setlocale(LC_CTYPE, "Polish");
 
     if (argc != 7) {
         wprintf(L"Program musi być uruchomiony z dokładnie sześcioma parametrami");
@@ -27,10 +27,10 @@ int main(int argc, char** argv) {
     }
 
     // parsing CLI arguments
-    long long parsed_args[6];
+    long double parsed_args[6];
     for (int i = 1; i < argc; i++) {
         char *endptr;
-        const auto converted = _strtoi64(argv[i], &endptr, 10);
+        const auto converted = strtold(argv[i], &endptr);
 
         // checking if the number can be parsed
         if (*endptr != '\0') {
@@ -38,9 +38,12 @@ int main(int argc, char** argv) {
             return 1;
         }
 
-        // parsing first two parameters, as they should be positive integers
-        if ((i == 1 || i == 2) && converted < 1) {
-            wprintf(L"Parametry nr 1 i 2 powinny być dodatnimi liczbami całkowitymi.");
+        if (i == 1 && converted < 1) {
+            wprintf(L"Parametr nr 1 musi być liczbą rzeczywistą większą bądź równą od 1.");
+            return 1;
+        }
+        if (i == 2 && converted <= 0) {
+            wprintf(L"Parametr nr 2 musi być liczbą rzeczywistą większą od zera.");
             return 1;
         }
 
@@ -62,9 +65,9 @@ int main(int argc, char** argv) {
         parsed_args[i-1] = converted;
     }
     const auto table_size_multiplier = parsed_args[0];
-    long double shot_strength = (long double)parsed_args[1];
-    point a = {(long double)parsed_args[2], (long double)parsed_args[3]};
-    const point vector = {(long double)parsed_args[4], (long double) parsed_args[5]};
+    long double shot_strength = parsed_args[1];
+    point a = {parsed_args[2], parsed_args[3]};
+    const point vector = {parsed_args[4],  parsed_args[5]};
     const point b = {a.x + vector.x, a.y + vector.y};
 
     const auto length = BASE_TABLE_HEIGHT * table_size_multiplier;
