@@ -3,14 +3,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "geometry.h"
+#include "console_grid.h"
+#define STB_DS_IMPLEMENTATION
+#include "stb_ds.h"
 
 #define BASE_TABLE_HEIGHT 2
 #define BASE_TABLE_WIDTH 4
-#define ENERGY_LOSS 1
-
-#define STB_DS_IMPLEMENTATION
-#include "console_grid.h"
-#include "stb_ds.h"
+#define ENERGY_LOSS 0.95
 
 // args:
 // 1. m - table size multiplier (positive integer)

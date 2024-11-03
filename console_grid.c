@@ -1,8 +1,7 @@
+#include <stdio.h>
 #include <math.h>
 #include "console_grid.h"
 #include "stb_ds.h"
-
-#include <stdio.h>
 
 // cartesian coordinates to grid coordinates
 void map_to_grid(const point p, int *grid_x, int *grid_y, const int table_width, const int table_height) {
@@ -84,7 +83,7 @@ void print_grid(grid g) {
     for (int i = 0; i < CONSOLE_GRID_HEIGHT; i++) {
         printf("|");
         for (int j = 0; j < CONSOLE_GRID_WIDTH; j++) {
-            putchar(g[i][j]);
+            printf("%c", g[i][j]);
         }
         printf("|%i\n", i);
     }
