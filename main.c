@@ -118,9 +118,11 @@ int main(int argc, char** argv) {
         slope *= -1;
     }
 
-    for (int i = 0; i < arrlen(bounces); i++) {
-        printf("%Lf, %Lf\n", bounces[i].x, bounces[i].y);
-    }
+    // uncomment to print bounce coordinates
+
+    // for (int i = 0; i < arrlen(bounces); i++) {
+    //     printf("%Lf, %Lf\n", bounces[i].x, bounces[i].y);
+    // }
 
     plot_lines(grid, bounces, width, length);
     mark_start_end(grid, bounces, width, length);

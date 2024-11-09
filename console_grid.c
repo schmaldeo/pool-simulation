@@ -85,7 +85,7 @@ void print_grid(grid g) {
         for (int j = 0; j < CONSOLE_GRID_WIDTH; j++) {
             printf("%c", g[i][j]);
         }
-        printf("|%i\n", i);
+        printf("|\n");
     }
 
     printf("+");
