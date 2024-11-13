@@ -23,11 +23,11 @@ void map_to_grid(const point p, int *grid_x, int *grid_y, const long double tabl
 
 
 // bresenham's line algorithm
-void plot_line(grid g, int x0, int y0, int x1, int y1) {
-    auto dx = abs(x1 - x0);
-    auto sx = x0 < x1 ? 1 : -1;
-    auto dy = -abs(y1 - y0);
-    auto sy = y0 < y1 ? 1 : -1;
+void plot_line(grid g, int x0, int y0, const int x1, const int y1) {
+    const auto dx = abs(x1 - x0);
+    const auto sx = x0 < x1 ? 1 : -1;
+    const auto dy = -abs(y1 - y0);
+    const auto sy = y0 < y1 ? 1 : -1;
     int err = dx + dy;
 
     while (true) {
@@ -35,13 +35,13 @@ void plot_line(grid g, int x0, int y0, int x1, int y1) {
             g[y0][x0] = '*';
         }
         if (x0 == x1 && y0 == y1) break;
-        int e2 = 2 * err;
+        const auto e2 = 2 * err;
         if (e2 >= dy) { err += dy; x0 += sx; }
         if (e2 <= dx) { err += dx; y0 += sy; }
     }
 }
 
-void mark_start_end(grid g, point *bounces, long double table_width, long double table_height) {
+void mark_start_end(grid g, point *bounces, const long double table_width, const long double table_height) {
     int gx, gy;
     map_to_grid(bounces[0], &gx, &gy, table_width, table_height);
     if (gx >= 0 && gx < CONSOLE_GRID_WIDTH && gy >= 0 && gy < CONSOLE_GRID_HEIGHT) {
@@ -63,7 +63,7 @@ void initial_fill_grid(grid g) {
     }
 }
 
-void plot_lines(grid g, point *bounces, long double table_width, long double table_height) {
+void plot_lines(grid g, point *bounces, const long double table_width, const long double table_height) {
     for (int i = 0; i < arrlen(bounces) - 1; i++) {
         int x0, y0, x1, y1;
         map_to_grid(bounces[i], &x0, &y0, table_width, table_height);

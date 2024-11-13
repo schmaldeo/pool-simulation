@@ -36,17 +36,17 @@ long double calculate_segment_length(const point a, const point b) {
 }
 
 point calculate_segment_end(const long double slope, const point p, const long double length, const bool positive, const axis axis) {
-    auto a = powl(slope, 2.0) + 1;
-    auto b = -2 * p.x - 2 * p.x * powl(slope, 2.0);
-    auto c = powl(p.x, 2.0) + powl(slope * p.x, 2.0) - powl(length, 2.0);
+    const auto a = powl(slope, 2.0) + 1;
+    const auto b = -2 * p.x - 2 * p.x * powl(slope, 2.0);
+    const auto c = powl(p.x, 2.0) + powl(slope * p.x, 2.0) - powl(length, 2.0);
 
-    auto delta = powl(b, 2.0) - (4 * a * c);
-    auto delta_sqrt = sqrtl(delta);
-    auto xb1 = (-b - delta_sqrt) / (2 * a);
-    auto xb2 = (-b + delta_sqrt) / (2 * a);
+    const auto delta = powl(b, 2.0) - 4 * a * c;
+    const auto delta_sqrt = sqrtl(delta);
+    const auto xb1 = (-b - delta_sqrt) / (2 * a);
+    const auto xb2 = (-b + delta_sqrt) / (2 * a);
 
-    auto yb1 = (slope * xb1) - (slope * p.x) + p.y;
-    auto yb2 = (slope * xb2) - (slope * p.x) + p.y;
+    const auto yb1 = slope * xb1 - slope * p.x + p.y;
+    const auto yb2 = slope * xb2 - slope * p.x + p.y;
 
     // both points are valid, just on a different side of the point that's passed to the function
     if ((axis == x && positive)

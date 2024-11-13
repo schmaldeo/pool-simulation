@@ -18,7 +18,7 @@
 // 4. y - Y coordinate of the ball's initial placement (integer)
 // 5. wx - X coordinate of vector of ball's initial movement
 // 6. wy - Y coordinate of vector of ball's initial movement
-int main(int argc, char** argv) {
+int main(const int argc, char** argv) {
     setlocale(LC_CTYPE, "Polish");
 
     if (argc != 7) {
@@ -84,15 +84,15 @@ int main(int argc, char** argv) {
 
     while (shot_strength > 0) {
         if (check_x_bounce(slope, length, width, positive[0], a, &out)) {
-            auto segment_length = calculate_segment_length(a, out);
+            const auto segment_length = calculate_segment_length(a, out);
             if (segment_length > shot_strength) {
                 // because if the vector's x is 0, it's not a linear function, normal line calculations don't work
                 // properly for it
                 if (vector.x != 0.0) {
-                    auto p = calculate_segment_end(slope, a, shot_strength, positive[1], x);
+                    const auto p = calculate_segment_end(slope, a, shot_strength, positive[1], x);
                     arrpush(bounces, p);
                 } else {
-                    point p = { out.x, positive[0] ? a.y + shot_strength : a.y - shot_strength };
+                    const point p = { out.x, positive[0] ? a.y + shot_strength : a.y - shot_strength };
                     arrpush(bounces, p);
                 }
                 break;
@@ -102,7 +102,7 @@ int main(int argc, char** argv) {
 
         if (check_y_bounce(slope, length, width, positive[1], a, &out)) {
             if (calculate_segment_length(a, out) > shot_strength) {
-                auto p = calculate_segment_end(slope, a, shot_strength, positive[1], x);
+                const auto p = calculate_segment_end(slope, a, shot_strength, positive[1], x);
                 arrpush(bounces, p);
                 break;
             }
