@@ -2,12 +2,11 @@
 #include "geometry.h"
 
 // checks if there is a bounce off the boundary along the Y axis
-bool check_y_bounce(const long double slope, const int table_height, const int table_width, const bool positive, const point in_point, point *out_point) {
+bool check_y_bounce(const long double slope, const long double table_height, const long double table_width, const bool positive, const point in_point, point *out_point) {
     auto x = table_width / 2;
     // if checking bottom boundary
     if (!positive) x *= -1;
     const auto y = slope * x - in_point.x * slope + in_point.y;
-
 
     const auto height = table_height / 2;
     if (y <= height && y >= -height) {
@@ -18,7 +17,7 @@ bool check_y_bounce(const long double slope, const int table_height, const int t
     return false;
 }
 
-bool check_x_bounce(const long double slope, const int table_height, const int table_width, const bool positive, const point in_point, point *out_point) {
+bool check_x_bounce(const long double slope, const long double table_height, const long double table_width, const bool positive, const point in_point, point *out_point) {
     auto y = table_height / 2;
     if (!positive) y *= -1;
     const auto x = (y - in_point.y) / slope + in_point.x;

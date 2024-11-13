@@ -4,7 +4,7 @@
 #include "stb_ds.h"
 
 // cartesian coordinates to grid coordinates
-void map_to_grid(const point p, int *grid_x, int *grid_y, const int table_width, const int table_height) {
+void map_to_grid(const point p, int *grid_x, int *grid_y, const long double table_width, const long double table_height) {
     *grid_x = (int)((p.x + table_width / 2) / table_width * CONSOLE_GRID_WIDTH);
     *grid_y = (int)((p.y + table_height / 2) / table_height * CONSOLE_GRID_HEIGHT);
 
@@ -41,7 +41,7 @@ void plot_line(grid g, int x0, int y0, int x1, int y1) {
     }
 }
 
-void mark_start_end(grid g, point *bounces, int table_width, int table_height) {
+void mark_start_end(grid g, point *bounces, long double table_width, long double table_height) {
     int gx, gy;
     map_to_grid(bounces[0], &gx, &gy, table_width, table_height);
     if (gx >= 0 && gx < CONSOLE_GRID_WIDTH && gy >= 0 && gy < CONSOLE_GRID_HEIGHT) {
@@ -63,7 +63,7 @@ void initial_fill_grid(grid g) {
     }
 }
 
-void plot_lines(grid g, point *bounces, int table_width, int table_height) {
+void plot_lines(grid g, point *bounces, long double table_width, long double table_height) {
     for (int i = 0; i < arrlen(bounces) - 1; i++) {
         int x0, y0, x1, y1;
         map_to_grid(bounces[i], &x0, &y0, table_width, table_height);
