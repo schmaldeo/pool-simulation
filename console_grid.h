@@ -14,6 +14,6 @@ void plot_line(grid g, int x0, int y0, int x1, int y1);
 void initial_fill_grid(grid g);
 void plot_lines(grid g, point *bounces, long double table_width, long double table_height);
 void mark_start_end(grid g, point *bounces, long double table_width, long double table_height);
-void print_grid(grid g);
+void print_grid(grid g, point* bounces, long double table_width, long double table_height);
 
 #endif //CONSOLE_GRID_H

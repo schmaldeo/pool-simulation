@@ -73,7 +73,9 @@ void plot_lines(grid g, point *bounces, const long double table_width, const lon
     }
 }
 
-void print_grid(grid g) {
+void print_grid(grid g, point* bounces, const long double table_width, const long double table_height) {
+    plot_lines(g, bounces, table_width, table_height);
+    mark_start_end(g, bounces, table_width, table_height);
     printf("+");
     for (int i = 0; i < CONSOLE_GRID_WIDTH; i++) {
         printf("-");

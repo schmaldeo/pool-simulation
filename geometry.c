@@ -1,5 +1,6 @@
 #include <math.h>
 #include "geometry.h"
+#include "simulation.h"
 
 // checks if there is a bounce off the boundary along the Y axis
 bool check_y_bounce(const long double slope, const long double table_height, const long double table_width, const bool positive, const point in_point, point *out_point) {

@@ -1,7 +1,7 @@
 #ifndef GEOMETRY_H
 #define GEOMETRY_H
 
-typedef struct { long double x; long double y; } point;
+#include "simulation.h"
 
 typedef enum { x, y } axis;
 

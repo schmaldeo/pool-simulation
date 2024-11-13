@@ -8,4 +8,6 @@ add_executable(projekt_studia main.c
         geometry.h
         console_grid.c
         console_grid.h
+        simulation.c
+        simulation.h
 )
