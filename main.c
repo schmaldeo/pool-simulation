@@ -119,9 +119,9 @@ int main(const int argc, char** argv) {
     }
 
     // uncomment to print bounce coordinates
-    for (int i = 0; i < arrlen(bounces); i++) {
-        printf("%Lf, %Lf\n", bounces[i].x, bounces[i].y);
-    }
+    // for (int i = 0; i < arrlen(bounces); i++) {
+    //     printf("%Lf, %Lf\n", bounces[i].x, bounces[i].y);
+    // }
 
     plot_lines(grid, bounces, width, length);
     mark_start_end(grid, bounces, width, length);
