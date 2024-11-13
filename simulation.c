@@ -13,7 +13,7 @@ point* run_simulation(const simulation_args args, point *bounces) {
     arrpush(bounces, a);
 
     while (shot_power > 0) {
-        if (check_x_bounce(slope, args.table_height, args.table_width, positive[0], a, &out)) {
+        if (check_x_bounce(slope, args.table_width, args.table_height, positive[0], a, &out)) {
             const auto segment_length = calculate_segment_length(a, out);
             if (segment_length > shot_power) {
                 // because if the vector's x is 0, it's not a linear function, normal line calculations don't work
@@ -30,7 +30,7 @@ point* run_simulation(const simulation_args args, point *bounces) {
             positive[0] = !positive[0];
         }
 
-        if (check_y_bounce(slope, args.table_height, args.table_width, positive[1], a, &out)) {
+        if (check_y_bounce(slope, args.table_width, args.table_height, positive[1], a, &out)) {
             if (calculate_segment_length(a, out) > shot_power) {
                 const auto p = calculate_segment_end(slope, a, shot_power, positive[1], x);
                 arrpush(bounces, p);

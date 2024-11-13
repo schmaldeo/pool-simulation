@@ -3,7 +3,7 @@
 #include "simulation.h"
 
 // checks if there is a bounce off the boundary along the Y axis
-bool check_y_bounce(const long double slope, const long double table_height, const long double table_width, const bool positive, const point in_point, point *out_point) {
+bool check_y_bounce(const long double slope, const long double table_width, const long double table_height, const bool positive, const point in_point, point *out_point) {
     auto x = table_width / 2;
     // if checking bottom boundary
     if (!positive) x *= -1;
@@ -18,7 +18,7 @@ bool check_y_bounce(const long double slope, const long double table_height, con
     return false;
 }
 
-bool check_x_bounce(const long double slope, const long double table_height, const long double table_width, const bool positive, const point in_point, point *out_point) {
+bool check_x_bounce(const long double slope, const long double table_width, const long double table_height, const bool positive, const point in_point, point *out_point) {
     auto y = table_height / 2;
     if (!positive) y *= -1;
     const auto x = (y - in_point.y) / slope + in_point.x;

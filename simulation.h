@@ -1,7 +1,6 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 
-// TODO rename height to length, change order (length should be 4)
 #define BASE_TABLE_HEIGHT 2
 #define BASE_TABLE_WIDTH 4
 #define ENERGY_LOSS 0.95
