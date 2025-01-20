@@ -4,10 +4,10 @@
 #include "geometry.h"
 
 point* run_simulation(const simulation_args args, point *bounces) {
+    // the parsing probably should be done in main.c and the values shouldn't be copied to variables
     point a = args.a;
     long double shot_power = args.shot_power;
-    const point b = {args.a.x + args.vector.x, args.a.y + args.vector.y};
-    auto slope = (b.y - args.a.y) / (b.x - args.a.x);
+    auto slope = args.vector.y / args.vector.x;
     point out;
     bool positive[2] = {args.vector.y > 0, args.vector.x > 0};
     arrpush(bounces, a);

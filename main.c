@@ -3,12 +3,13 @@
 #include <stdlib.h>
 #include "console_grid.h"
 #include "simulation.h"
+#include "stb_ds.h"
 
 // args:
-// 1. m - table size multiplier (positive integer)
-// 2. s - shot strength (positive integer)
-// 3. x - X coordinate of the ball's initial placement (integer)
-// 4. y - Y coordinate of the ball's initial placement (integer)
+// 1. m - table size multiplier
+// 2. s - shot strength
+// 3. x - X coordinate of the ball's initial placement
+// 4. y - Y coordinate of the ball's initial placement
 // 5. wx - X coordinate of vector of ball's initial movement
 // 6. wy - Y coordinate of vector of ball's initial movement
 bool parse_args(const int argc, char** argv, simulation_args *out_parsed_args) {
@@ -29,7 +30,7 @@ bool parse_args(const int argc, char** argv, simulation_args *out_parsed_args) {
         }
 
         if (i == 1 && converted < 1) {
-            wprintf(L"Parametr nr 1 musi być liczbą rzeczywistą większą bądź równą od 1.");
+            wprintf(L"Parametr nr 1 musi być liczbą rzeczywistą większą od bądź równą 1.");
             return false;
         }
         if (i == 2 && converted <= 0) {
@@ -67,11 +68,9 @@ bool parse_args(const int argc, char** argv, simulation_args *out_parsed_args) {
 int main(const int argc, char** argv) {
     setlocale(LC_CTYPE, "Polish");
 
-    char grid[CONSOLE_GRID_HEIGHT][CONSOLE_GRID_WIDTH];
-    initial_fill_grid(grid);
-
     simulation_args parsed_args;
     if (!parse_args(argc, argv, &parsed_args)) return 1;
+
     point* bounces = nullptr;
     bounces = run_simulation(parsed_args, bounces);
 
@@ -80,6 +79,8 @@ int main(const int argc, char** argv) {
     //     printf("%Lf, %Lf\n", bounces[i].x, bounces[i].y);
     // }
 
+    char grid[CONSOLE_GRID_HEIGHT][CONSOLE_GRID_WIDTH];
+    initial_fill_grid(grid);
     print_grid(grid, bounces, parsed_args.table_width, parsed_args.table_height);
     cleanup(bounces);
 
